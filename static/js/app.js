@@ -2,94 +2,157 @@
 
 const url = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json"
 
+
 // populate the default dashboard
 
 function init() {
   d3.json("samples.json").then((data) => {
-     … // do something to get samplenames
-   }};
-   var some_sample = samplenames[0]
-   buildCharts(some_sample);
-}
+    console.log(data)
+    let samples = data.samples;
+
+    // Populate the dropdown menu
+    let sampleIDs = samples.map(x => x.id)
+
+        var choices = d3.select("#selDataset");
+        Object.entries(sampleIDs).forEach(([k,v]) => {
+          choices.append("option").attr("value", v).text(v)});
+
+            // choices.onchange = function () {
+            // var choice = choices.property("value");
+            // console.log(choice);
+            // console.log(samples[choice])
+            // buildCharts(samples[choice]);
+            // };
+
+            let firstSample = sampleIDs[0];
+            buildCharts(firstSample)
+          }
+        )};
 
 function buildCharts(sample) {
-   buildBarChart(sample)
+   buildBarChart(sample);
+}
+
+function optionChanged(newSample) {
+  buildBarChart (newSample);
 }
 
 function buildBarChart(sample) {
-   d3.json("samples.json").then((data) => {
-      otuIds = …
-      sampleValues = …
-      otuLabels = …
+   d3.json(url).then((data) => {
+    let samples = data.samples;
+    let sampleofInterest = samples.filter(x => x.id == sample);
+    let firstSample = sampleofInterest[0]
+    let otuIds = firstSample.otu_labels
+    let sampleValues = firstSample.sample_values
+    let otuLabels =  firstSample.otu_labels
 
-      var plot_data = …
-
-      Plotly.newPlot('bar',...)
-    })
-}
-
-
-// Fetch the JSON data 
-
-  d3.json(url).then(function (data) {
-  // let metadata = data.metadata
-    let names = data.names
-    let samples = data.samples
-  // console.log(names);
-    let sample_values = samples.map(function (x) {
-      return x.sample_values;
-    });
-    console.log(sample_values)
-
-    // // Use otu_ids as the labels for the bar chart.
-
-    let otu_ids = samples.map(function (x) {
-    return x.otu_ids});
-
-    // // Use otu_labels as the hovertext for the chart.
-
-    let otu_labels = samples.map(function (x) {
-    return x.otu_labels});
-
-    // Use the names to populate the dropdown menu
-
-    var choices = d3.select("#selDataset");
-    Object.entries(names).forEach(([k,v]) => {
-      choices.append("option").attr("value", v).text(v)});
-
-    choices.onchange = function () {
-    var choice = choices.property("value");
-    console.log(choice);
-    console.log(samples[choice])
-    create_plot(samples[choice]);
-    };
-
-
-  // make a first plot to greet us on the page
-
-    function create_plot(d){
-      plot_data = [
+      var plot_data = [
         {
-          x: sample_values[d],
-          y: otu_ids[d],
-          labels: otu_labels[d],
+          x: otuIds,
+          y: sampleValues,
+          labels: otuLabels,
           type: "bar"
         }]
       layout = {
           title: "Graph"
       }
     Plotly.newPlot("bar", plot_data, layout);
-}
-// function update_plot(d){
-//   let values = Object.values(d);
-//   let labels =  Object.keys(d);
-//   Plotly.restyle("pie", "values", [values]);
-//   Plotly.restyle("pie", "labels", [labels]);
-// }
+    
 
-create_plot(0);
-});
+    var bubbleData = [
+      {
+      x: otuIds.slice(0, 10).reverse(),
+      y: sampleValues.slice(0, 10).reverse(),
+      text: sampleValues.slice(0, 10).reverse(),
+      mode: 'markers',
+      marker: {
+        size: sampleValues.slice(0, 10).reverse(),
+        color: otuIds.slice(0, 10).reverse(),
+        colorscale: 'sequential' 
+      }}
+    ];
+
+    // 2. Create the layout for the bubble chart.
+    var bubbleLayout = {
+      title: "<b>Bacteria Cultures Per Sample</b>",
+      xaxis: {title: "OTU ID"},
+      margin:{
+        l: 50,
+        r: 50,
+        b: 100,
+        t: 100,
+        pad: 4
+      },
+      showlegend: false,
+      hovermode: 'closest'
+    };
+
+    // 3. Use Plotly to plot the data with the layout.
+    Plotly.newPlot("bubble", bubbleData, bubbleLayout);
+  })
 }
+
+
+// // Fetch the JSON data 
+
+//   d3.json(url).then(function (data) {
+//     let names = data.names
+//     let samples = data.samples
+//   // console.log(names);
+//     let sample_values = samples.map(function (x) {
+//       return x.sample_values;
+//     });
+//     console.log(sample_values)
+
+//     // // Use otu_ids as the labels for the bar chart.
+
+//     let otu_ids = samples.map(function (x) {
+//     return x.otu_ids});
+// es
+//     // // Use otu_labels as the hovertext for the chart.
+
+//     let otu_labels = samples.map(function (x) {
+//     return x.otu_labels});
+
+//     // Use the names to populate the dropdown menu
+
+//     var choices = d3.select("#selDataset");
+//     Object.entries(names).forEach(([k,v]) => {
+//       choices.append("option").attr("value", v).text(v)});
+
+//     choices.onchange = function () {
+//     var choice = choices.property("value");
+//     console.log(choice);
+//     console.log(samples[choice])
+//     create_plot(samples[choice]);
+//     };
+
+
+//   // make a first plot to greet us on the page
+
+//     function create_plot(d){
+//       plot_data = [
+//         {
+//           x: sample_values[d],
+//           y: otu_ids[d],
+//           labels: otu_labels[d],
+//           type: "bar"
+//         }]
+//       layout = {
+//           title: "Graph"
+//       }
+//     Plotly.newPlot("bar", plot_data, layout);
+// }
+// // function update_plot(d){
+// //   let values = Object.values(d);
+// //   let labels =  Object.keys(d);
+// //   Plotly.restyle("pie", "values", [values]);
+// //   Plotly.restyle("pie", "labels", [labels]);
+// // }
+
+// create_plot(0);
+// });
+// }
 
 init()
 
