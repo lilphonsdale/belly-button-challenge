@@ -4,61 +4,81 @@ const url = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/
 
 // populate the default dashboard
 
-function init(){
+function init() {
+  d3.json("samples.json").then((data) => {
+     … // do something to get samplenames
+   }};
+   var some_sample = samplenames[0]
+   buildCharts(some_sample);
+}
+
+function buildCharts(sample) {
+   buildBarChart(sample)
+}
+
+function buildBarChart(sample) {
+   d3.json("samples.json").then((data) => {
+      otuIds = …
+      sampleValues = …
+      otuLabels = …
+
+      var plot_data = …
+
+      Plotly.newPlot('bar',...)
+    })
+}
+
 
 // Fetch the JSON data 
 
-d3.json(url).then(function (data) {
+  d3.json(url).then(function (data) {
   // let metadata = data.metadata
-  let names = data.names
-  let samples = data.samples
+    let names = data.names
+    let samples = data.samples
   // console.log(names);
-  let sample_values = samples.map(function (x) {
-    return x.sample_values;
-  });
-  console.log(sample_values)
+    let sample_values = samples.map(function (x) {
+      return x.sample_values;
+    });
+    console.log(sample_values)
 
-  // // Use otu_ids as the labels for the bar chart.
+    // // Use otu_ids as the labels for the bar chart.
 
-  let otu_ids = samples.map(function (x) {
-  return x.otu_ids;
-  });
+    let otu_ids = samples.map(function (x) {
+    return x.otu_ids});
 
-  // // Use otu_labels as the hovertext for the chart.
+    // // Use otu_labels as the hovertext for the chart.
 
-  let otu_labels = samples.map(function (x) {
-  
-    return x.otu_labels;
-  });
+    let otu_labels = samples.map(function (x) {
+    return x.otu_labels});
 
-// Use the names to populate the dropdown menu
+    // Use the names to populate the dropdown menu
 
-  var choices = d3.select("#selDataset");
-  Object.entries(names).forEach(([k,v]) => {
-    choices.append("option").attr("value", v).text(v)});
+    var choices = d3.select("#selDataset");
+    Object.entries(names).forEach(([k,v]) => {
+      choices.append("option").attr("value", v).text(v)});
 
-  choices.onchange = function () {
+    choices.onchange = function () {
     var choice = choices.property("value");
     console.log(choice);
     console.log(samples[choice])
     create_plot(samples[choice]);
-  };
+    };
 
 
-// make a first plot to greet us on the page
+  // make a first plot to greet us on the page
 
-function create_plot(d){
-  plot_data = [
-      {
+    function create_plot(d){
+      plot_data = [
+        {
           x: sample_values[d],
           y: otu_ids[d],
           labels: otu_labels[d],
           type: "bar"
-      }]
-  layout = {
-        title: "Graph"
-  }
-  Plotly.newPlot("bar", plot_data, layout);
+        }]
+      layout = {
+          title: "Graph"
+      }
+    Plotly.newPlot("bar", plot_data, layout);
 }
 // function update_plot(d){
 //   let values = Object.values(d);
@@ -201,3 +221,7 @@ init()
 //   console.log("sample_values:", sample_values)
 //   console.log("otu_ids:", otu_ids)
 //   console.log("otu_labels:", otu_labels)
+
+
+
+
