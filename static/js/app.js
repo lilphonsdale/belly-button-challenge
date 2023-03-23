@@ -33,18 +33,17 @@ function visualize(sample) {
     let otuIds = firstSample.otu_ids
     let sampleValues = firstSample.sample_values
     let otuLabels =  firstSample.otu_labels
-    let yticks = otuIds.slice(0, 10).reverse()
 
       var bar_data = [
         {
-          y: yticks,
-          x: sampleValues.slice(0, 10).reverse(),
-          text: otuLabels.slice(0, 10).reverse(),
+          x: sampleValues.slice(0,10).reverse(),
+          y: otuIds.slice(0, 10).map(otuIds => `OTU ${otuIds}`).reverse(),
+          text: otuLabels.slice(0,10).reverse(),
           orientation: 'h',
-          type: "bar"
+          type: "bar",
         }]
       bar_layout = {
-          title: "<b>Top 10 OTUs found in the individual<b>"
+          title: "<b>Top 10 OTUs found in the individual<b>",
       }
     Plotly.newPlot("bar", bar_data, bar_layout);
     
@@ -64,14 +63,6 @@ function visualize(sample) {
     var bubble_layout = {
       title: "<b>Bacteria Cultures Per Sample</b>",
       xaxis: {title: "OTU ID"},
-      margin:{
-        l: 50,
-        r: 50,
-        b: 100,
-        t: 100,
-        pad: 4
-      },
-      showlegend: false,
       hovermode: 'closest'
     };
 
