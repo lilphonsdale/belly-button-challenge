@@ -57,7 +57,7 @@ function visualize(sample) {
       {
       x: otuIds,
       y: sampleValues,
-      text: sampleValues,
+      text: otuLabels,
       mode: 'markers',
       marker: {
         size: sampleValues,
