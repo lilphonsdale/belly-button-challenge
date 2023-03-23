@@ -3,19 +3,21 @@
 const url = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json"
 
 
-// populate the default dashboard
+// populate the default dashboard with an init function
 
 function init() {
   d3.json("samples.json").then((data) => {
     console.log(data)
     let samples = data.samples;
 
-      // Populate the dropdown menu
+      // Add the sample Ids to the dropdown menu
       let sampleIDs = samples.map(x => x.id)
 
       var choices = d3.select("#selDataset");
       Object.entries(sampleIDs).forEach(([k,v]) => {
       choices.append("option").attr("value", v).text(v)});
+
+      //Use the first sampleId to generate the first charts
 
     let firstSample = sampleIDs[0];
     visualize(firstSample)
@@ -34,6 +36,8 @@ function visualize(sample) {
     let sampleValues = firstSample.sample_values
     let otuLabels =  firstSample.otu_labels
 
+// create a trace for the bar chart
+
       var bar_data = [
         {
           x: sampleValues.slice(0,10).reverse(),
@@ -47,6 +51,7 @@ function visualize(sample) {
       }
     Plotly.newPlot("bar", bar_data, bar_layout);
     
+// create a trace for the bubble chart
 
     var bubble_data = [
       {
@@ -85,11 +90,14 @@ function describe(sample) {
 });
 }
 
+// A function to update the charts when a selection is made from the dropdown menu
 
 function optionChanged(newSample) {
   visualize(newSample)
   describe(newSample);
 }
+
+// Run the init function!
 
 init()
 
